@@ -20,6 +20,19 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+      
+      - name: Setup dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          brewery:
+            target: ci
+            outputs:
+              ci:
+                type: duckdb
+                path: ":memory:"
+                threads: 1
+          EOF
 
       - name: Run dbt deps
         run: |

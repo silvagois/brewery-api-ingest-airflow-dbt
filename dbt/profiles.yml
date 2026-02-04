@@ -1,3 +1,5 @@
+
+# ~/.dbt/profiles.yml
 brewery:
   target: dev
   outputs:
@@ -8,5 +10,11 @@ brewery:
       external_root: /opt/airflow/data
       #external_root: ../data
       #path: ../data/duckdb/brewery.duckdb
+  target: ci
+  outputs:
+    ci:
+      type: duckdb
+      path: ":memory:"
+      threads: 1
       
 

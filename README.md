@@ -24,7 +24,7 @@ Gold (Aggregated / Analytics)
 
 #### Arquitetura do Projeto
 
-<img src="docs/architecture.png" alt="Descrição" width="500" height="auto">
+<img src="docs/architecture.png" alt="Arquitetura do projeto" width="500" height="auto">
 
 
 - **DuckDB**: Engine storage analitica
@@ -41,20 +41,20 @@ Gold (Aggregated / Analytics)
 duckdb-dbt-airflow/
 │
 ├── data/
-│ ├── landing/ # Raw JSON files partitioned by ingestion date
-│ ├── bronze/ # External Parquet tables (dbt external models)
-│ ├── silver/ # Cleaned and incremental tables
-│ ├── gold/ # Aggregated analytical tables
 │ └── duckdb/
-│ └── brewery.duckdb
+│   └── brewery.duckdb
+│ ├── landing/ # Raw JSON files particionados por ingestion date
 │
 ├── dbt/
 │ ├── dbt_project.yml
 │ ├── profiles.yml
+│ ├── macros
+│ ├── logs
+│ ├── .user.yml
 │ └── models/
-│ ├── bronze/
-│ ├── silver/
-│ └── gold/
+│   ├── bronze/ # External Parquet tables (dbt external models)
+│   ├── silver/ # Cleaned and incremental tables
+│   └── gold/ Aggregated analytical tables
 │
 ├── dags/
 │ └── brewery_pipeline_dag.py
@@ -114,6 +114,10 @@ Airflow UI: http://localhost:8080
 - Transformar dados usando dbt (Bronze → Silver → Gold)
 
 - Executar testes de qualidade de dados
+
+### Airflow Executando as Dag com sucesso
+
+<img src="docs/dag_brewery_data_pipeline.png" alt="Arquitetura do projeto" width="500" height="auto">
 
 # Qualidade de Dados com dbt: Testes e Data Contracts
 
