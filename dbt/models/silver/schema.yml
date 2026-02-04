@@ -64,6 +64,3 @@ models:
 
       - name: ingestion_date
         data_type: date
-      
-      - name: rn
-        data_type: bigint
