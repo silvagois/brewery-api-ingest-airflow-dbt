@@ -32,14 +32,26 @@ with DAG(
         },
     )
 
+    # dbt_bronze = BashOperator(
+    #     task_id="dbt_bronze",
+    #     bash_command="""
+    #     dbt run \
+    #     --project-dir /opt/airflow/dbt \
+    #     --profiles-dir /opt/airflow/dbt \
+    #     --select breweries_bronze \
+    #     --vars '{"execution_date": "{{ ds }}"}'
+    #     """
+    # )
+
     dbt_bronze = BashOperator(
         task_id="dbt_bronze",
         bash_command="""
         dbt run \
-        --project-dir /opt/airflow/dbt \
-        --profiles-dir /opt/airflow/dbt \
-        --select breweries_bronze \
-        --vars '{"execution_date": "{{ ds }}"}'
+        --models bronze.breweries_bronze \
+        --vars '{
+            "execution_date": "{{ ds }}",
+            "data_root": "/opt/airflow/data"
+        }'
         """
     )
 
