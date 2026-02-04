@@ -15,13 +15,19 @@ models:
 
       - name: brewery_type
         tests:
-          - accepted_values:
+          accepted_values:
+            arguments:
               values:
-                [
-                  micro, nano, regional, brewpub,
-                  large, planning, bar, contract,
-                  proprietor, closed
-                ]
+                - micro
+                - nano
+                - regional
+                - brewpub
+                - large
+                - planning
+                - bar
+                - contract
+                - proprietor
+                - closed
 
       - name: ingestion_date
         tests:

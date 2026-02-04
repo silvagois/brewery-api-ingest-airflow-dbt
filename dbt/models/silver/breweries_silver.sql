@@ -2,6 +2,39 @@
     materialized = "table"
 ) }}
 
+{% if target.name == "ci" %}
+
+-- ============================================================
+-- CI MODE
+-- Cria tabela vazia respeitando o CONTRATO da camada Silver
+-- ============================================================
+
+SELECT
+    NULL::VARCHAR AS brewery_id,
+    NULL::VARCHAR AS brewery_name,
+    NULL::VARCHAR AS brewery_type,
+    NULL::VARCHAR AS address_1,
+    NULL::VARCHAR AS address_2,
+    NULL::VARCHAR AS address_3,
+    NULL::VARCHAR AS city,
+    NULL::VARCHAR AS state,
+    NULL::VARCHAR AS state_province,
+    NULL::VARCHAR AS postal_code,
+    NULL::VARCHAR AS country,
+    NULL::DOUBLE  AS longitude,
+    NULL::DOUBLE  AS latitude,
+    NULL::VARCHAR AS phone,
+    NULL::VARCHAR AS website_url,
+    NULL::VARCHAR AS street,
+    NULL::DATE    AS ingestion_date
+WHERE 1 = 0
+
+{% else %}
+
+-- ============================================================
+-- PROD / AIRFLOW MODE
+-- ============================================================
+
 WITH bronze AS (
     SELECT
         id,
@@ -22,8 +55,8 @@ WITH bronze AS (
         street,
         ingestion_date
     FROM {{ ref('breweries_bronze') }}
-
 ),
+
 cleaned AS (
     SELECT
         id::VARCHAR                    AS brewery_id,
@@ -45,8 +78,8 @@ cleaned AS (
         ingestion_date
     FROM bronze
     WHERE id IS NOT NULL
-
 ),
+
 deduplicated AS (
     SELECT *
     FROM (
@@ -59,6 +92,26 @@ deduplicated AS (
         FROM cleaned
     )
     WHERE rn = 1
-
 )
-SELECT * FROM deduplicated
+
+SELECT
+    brewery_id,
+    brewery_name,
+    brewery_type,
+    address_1,
+    address_2,
+    address_3,
+    city,
+    state,
+    state_province,
+    postal_code,
+    country,
+    longitude,
+    latitude,
+    phone,
+    website_url,
+    street,
+    ingestion_date
+FROM deduplicated
+
+{% endif %}
