@@ -19,10 +19,11 @@
 
 {% if target.name == "ci" %}
 
--- CI: retorna tabela vazia (não lê arquivos)
+-- CI: tabela vazia com CONTRATO COMPLETO
 SELECT
-    NULL::VARCHAR AS brewery_id,
+    NULL::VARCHAR AS id,
     NULL::VARCHAR AS name,
+    NULL::VARCHAR AS brewery_type,
     NULL::VARCHAR AS city,
     NULL::VARCHAR AS state,
     '{{ execution_date }}'::DATE AS ingestion_date
@@ -30,9 +31,13 @@ WHERE 1 = 0
 
 {% else %}
 
--- PROD / AIRFLOW: lê arquivos reais
+-- PROD / AIRFLOW
 SELECT
-    *,
+    id,
+    name,
+    brewery_type,
+    city,
+    state,
     '{{ execution_date }}'::DATE AS ingestion_date
 FROM read_json(
     '{{ data_root }}/landing/breweries/{{ execution_date }}/list_breweries.json'
