@@ -1,0 +1,21 @@
+name: brewery
+version: "1.0"
+profile: brewery
+
+vars:
+  #data_root: r"C:\Users\marco\Documents\desafios-tecnicos-entrevistas\AbInbev\projeto-base\duckdb-dbt-airflow\data"
+  data_root: "/opt/airflow/data"
+
+models:
+  brewery:
+    bronze:
+      materialized: external
+      format: parquet
+      #location: "../dbt/models/bronze"
+      #format: parquet      
+
+    silver:
+      materialized: table
+
+    gold:
+      materialized: table

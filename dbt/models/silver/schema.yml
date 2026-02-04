@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: breweries_silver
+    description: "Cleaned, deduplicated breweries data"
+
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: brewery_id
+        data_type: varchar
+        tests:
+          - not_null
+          - unique
+
+      - name: brewery_name
+        data_type: varchar
+
+      - name: brewery_type
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: address_1
+        data_type: varchar
+
+      - name: address_2
+        data_type: varchar
+
+      - name: address_3
+        data_type: varchar
+
+      - name: city
+        data_type: varchar
+
+      - name: state
+        data_type: varchar
+
+      - name: state_province
+        data_type: varchar
+
+      - name: postal_code
+        data_type: varchar
+
+      - name: country
+        data_type: varchar
+
+      - name: longitude
+        data_type: double
+
+      - name: latitude
+        data_type: double
+
+      - name: phone
+        data_type: varchar
+
+      - name: website_url
+        data_type: varchar
+
+      - name: street
+        data_type: varchar
+
+      - name: ingestion_date
+        data_type: date
+      
+      - name: rn
+        data_type: bigint

@@ -1,0 +1,12 @@
+brewery:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: /opt/airflow/data/duckdb/brewery.duckdb      
+      schema: main
+      external_root: /opt/airflow/data
+      #external_root: ../data
+      #path: ../data/duckdb/brewery.duckdb
+      
+

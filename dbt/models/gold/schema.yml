@@ -1,0 +1,9 @@
+models:
+  - name: breweries_by_type_and_location
+    columns:
+      - name: brewery_type
+        tests:
+          - not_null
+      #- name: brewery_count
+      #  tests:
+      #    - not_null

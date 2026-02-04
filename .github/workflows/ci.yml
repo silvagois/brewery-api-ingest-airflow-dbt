@@ -1,0 +1,32 @@
+name: dbt CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run dbt deps
+        run: |
+          cd dbt
+          dbt deps
+
+      - name: Run dbt build
+        run: |
+          cd dbt
+          dbt build --fail-fast
