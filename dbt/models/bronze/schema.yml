@@ -2,7 +2,8 @@ version: 2
 
 models:
   - name: breweries_bronze
-    description: "Raw breweries data ingested from Open Brewery DB"
+    description: Raw breweries data ingested from Open Brewery DB
+
     columns:
       - name: id
         tests:
@@ -15,19 +16,19 @@ models:
 
       - name: brewery_type
         tests:
-          accepted_values:
-            arguments:
-              values:
-                - micro
-                - nano
-                - regional
-                - brewpub
-                - large
-                - planning
-                - bar
-                - contract
-                - proprietor
-                - closed
+          - accepted_values:
+              arguments:
+                values:
+                  - micro
+                  - nano
+                  - regional
+                  - brewpub
+                  - large
+                  - planning
+                  - bar
+                  - contract
+                  - proprietor
+                  - closed
 
       - name: ingestion_date
         tests:
