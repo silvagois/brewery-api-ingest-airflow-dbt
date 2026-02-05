@@ -1,7 +1,3 @@
-Perfeito — dá sim 👍
-Abaixo está **o mesmo README traduzido para inglês**, **sem alterar conceitos**, **sem alterar estrutura**, **sem mudar formatação**, apenas tradução fiel do conteúdo.
-
-Você pode **copiar e colar direto** no seu `README.md`.
 
 ---
 
