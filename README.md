@@ -32,7 +32,7 @@ Gold (Aggregated / Analytics)
 
 #### Project Architecture
 
-<img src="docs/architecture.png" alt="Project architecture" width="500" height="auto">
+<img src="docs/architecture.png" alt="Project architecture" width="800" height="auto">
 
 * **DuckDB**: Analytical storage engine
 * **dbt**: Transformations, testing, data contracts
