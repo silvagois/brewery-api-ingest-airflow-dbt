@@ -1,14 +1,26 @@
-# 🍺 Brewery Plataforma de Dados (DuckDB + dbt + Airflow)
+Perfeito — dá sim 👍
+Abaixo está **o mesmo README traduzido para inglês**, **sem alterar conceitos**, **sem alterar estrutura**, **sem mudar formatação**, apenas tradução fiel do conteúdo.
 
-## 📌 Overview
-
-Esse projeto implementa uma plataforma de dados moderna localmente usando  **DuckDB**( Simulando um modern Data Warehouse como Bigquery, Snowflake, Redshift ou Databricks), **dbt**, and **Apache Airflow**, seguindo a arquitetura de dados **Medallion Architecture (Bronze / Silver / Gold)** Decidi alterar um pouco a arquitetura Medallion tradicional inserindo uma landing zone com os dados brutos e na bronze os dados sem alteração porém em formato parquet particionados.
-
-Este pipeline de dados extrai dados via Python requests na **Open Brewery DB API**, armazena na **Landing Zone**  em seu formato bruto raw, o Apache Airflow trigga seu schedule diário coletando dados da landing e armazenando na layer **Bronze** particionado por data YYYY-MM-DD em formato parquet, onde é feito limpeza e transformação na **Silver** layer e agregado na **Gold** um pipeline simples que pode ser usando em diferentes cenários, clouds usando das melhores praticas de Data Quality, Data Governance, Data Contracts, Monitoring, Observability, CI no desenvolvimento deste projeto. Como esse pipeline foi feito local usando Docker os dados estão armazenados nos volumes porém inseridos no banco de dados duckdb simulando um Datalake que seja ou num S3/Databricks Lakehouse, ou em Dataset no bigquery por exemplo, a ideia é mostrar os conceitos utilizados e os mesmos podem ser dsenvolvidos em diferentes ambientes 
+Você pode **copiar e colar direto** no seu `README.md`.
 
 ---
 
-## 🏗️ Arquitetura
+# 🍺 Brewery Data Platform (DuckDB + dbt + Airflow)
+
+## 📌 Overview
+
+This project implements a modern local data platform using **DuckDB** (simulating a modern Data Warehouse such as BigQuery, Snowflake, Redshift, or Databricks), **dbt**, and **Apache Airflow**, following the **Medallion Architecture (Bronze / Silver / Gold)**.
+I decided to slightly modify the traditional Medallion Architecture by introducing a **Landing Zone** with raw data, and keeping the **Bronze layer** as untransformed data but stored in **partitioned Parquet format**.
+
+This data pipeline extracts data via Python requests from the **Open Brewery DB API**, stores it in the **Landing Zone** in raw JSON format, and Apache Airflow triggers a daily schedule that reads data from the landing zone and stores it in the **Bronze layer**, partitioned by date (YYYY-MM-DD) in Parquet format.
+Data is then cleaned and transformed in the **Silver layer** and aggregated in the **Gold layer**, forming a simple analytical pipeline that can be reused in different scenarios and cloud environments, applying best practices of **Data Quality, Data Governance, Data Contracts, Monitoring, Observability, and CI**.
+
+Since this pipeline runs locally using Docker, data is stored in Docker volumes but queried through **DuckDB**, simulating a **Data Lake** (e.g. S3 / Databricks Lakehouse or a BigQuery dataset).
+The goal is to demonstrate architectural concepts that can be applied consistently across different environments.
+
+---
+
+## 🏗️ Architecture
 
 ```
 API
@@ -22,16 +34,15 @@ Silver (Incremental / Cleaned)
 Gold (Aggregated / Analytics)
 ```
 
-#### Arquitetura do Projeto
+#### Project Architecture
 
-<img src="docs/architecture.png" alt="Arquitetura do projeto" width="500" height="auto">
+<img src="docs/architecture.png" alt="Project architecture" width="500" height="auto">
 
-
-- **DuckDB**: Engine storage analitica
-- **dbt**: Transformações, testing, contrato de dados
-- **Airflow**: Orquestração
-- **Docker**: Reprodução Local
-- **GitHub Actions**: CI com dbt tests
+* **DuckDB**: Analytical storage engine
+* **dbt**: Transformations, testing, data contracts
+* **Airflow**: Orchestration
+* **Docker**: Local reproducibility
+* **GitHub Actions**: CI with dbt tests
 
 ---
 
@@ -43,7 +54,7 @@ duckdb-dbt-airflow/
 ├── data/
 │ └── duckdb/
 │   └── brewery.duckdb
-│ ├── landing/ # Raw JSON files particionados por ingestion date
+│ ├── landing/ # Raw JSON files partitioned by ingestion date
 │
 ├── dbt/
 │ ├── dbt_project.yml
@@ -54,7 +65,7 @@ duckdb-dbt-airflow/
 │ └── models/
 │   ├── bronze/ # External Parquet tables (dbt external models)
 │   ├── silver/ # Cleaned and incremental tables
-│   └── gold/ Aggregated analytical tables
+│   └── gold/ # Aggregated analytical tables
 │
 ├── dags/
 │ └── brewery_pipeline_dag.py
@@ -74,89 +85,89 @@ duckdb-dbt-airflow/
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
-
 ```
-
 
 ---
 
-## ⚙️ Como executar localmente
+## ⚙️ How to Run Locally
 
-### 1️⃣ Iniciando a Plataforma (Airflow + dbt + DuckDB)
+### 1️⃣ Starting the Platform (Airflow + dbt + DuckDB)
 
 ```bash
 docker-compose -p airflow up --build
-
 ```
 
-Uma vez que o container esta rodando, acesse:
+Once the containers are running, access:
 
-Airflow UI: http://localhost:8080
+**Airflow UI:** [http://localhost:8080](http://localhost:8080)
 
-- User: airflow
-
-- Password: airflow
-
-## 2️⃣ Trigando o pipeline
-
-**No Airflow UI:**
-
-- Procure a DAG `brewery_data_pipeline`
-
-- Acione ela manualmente ou deixe executar via scheduler
-
-**O pipeline irá fazer:**
-
-- Ingerir dados da Open Brewery DB API
-
-- Armazenar dados brutos na área de destino (JSON)
-
-- Transformar dados usando dbt (Bronze → Silver → Gold)
-
-- Executar testes de qualidade de dados
-
-### Airflow Executando as Dag com sucesso
-
-<img src="docs/dag_brewery_data_pipeline.png" alt="Arquitetura do projeto" width="500" height="auto">
-
-# Qualidade de Dados com dbt: Testes e Data Contracts
-
-Este projeto utiliza **dbt** como camada central de qualidade de dados, aplicando **testes automáticos**, **data contracts** e integração com **Airflow** e **CI** para garantir confiabilidade ponta‑a‑ponta no pipeline.
+* User: airflow
+* Password: airflow
 
 ---
 
-## 🎯 Objetivos desta etapa
+## 2️⃣ Triggering the Pipeline
 
-* Garantir **qualidade e consistência** dos dados transformados
-* Detectar falhas **antes** de dados chegarem à camada Gold
-* Formalizar expectativas de schema via **Data Contracts**
-* Automatizar validações via **Airflow** e **CI/CD**
+**In the Airflow UI:**
+
+* Search for the DAG `brewery_data_pipeline`
+* Trigger it manually or let it run via the scheduler
+
+**The pipeline will:**
+
+* Ingest data from the Open Brewery DB API
+* Store raw data in the landing zone (JSON)
+* Transform data using dbt (Bronze → Silver → Gold)
+* Execute data quality tests
+
+### Airflow DAG Running Successfully
+
+<img src="docs/dag_brewery_data_pipeline.png" alt="Airflow DAG" width="500" height="auto">
+
+### Gold Table in DuckDb
+
+<img src="docs/gold_table_duckdb.png" alt="Airflow DAG" width="500" height="auto">
 
 ---
 
-## 🧱 Onde a qualidade entra na arquitetura
+# Data Quality with dbt: Tests and Data Contracts
+
+This project uses **dbt** as the central data quality layer, applying **automated tests**, **data contracts**, and integration with **Airflow** and **CI** to ensure end-to-end reliability.
+
+---
+
+## 🎯 Goals of This Stage
+
+* Ensure **data quality and consistency**
+* Detect failures **before** data reaches the Gold layer
+* Formalize schema expectations via **Data Contracts**
+* Automate validations through **Airflow** and **CI/CD**
+
+---
+
+## 🧱 Where Data Quality Fits in the Architecture
 
 ```
 Landing → Bronze → Silver → Gold
               ↑        ↑
-         Tests básicos  Tests + Contracts
+         Basic tests   Tests + Contracts
 ```
 
-* **Bronze**: validações mínimas (existência de arquivo, schema flexível)
-* **Silver**: limpeza, deduplicação, **contracts + testes**
-* **Gold**: métricas confiáveis, prontas para consumo
+* **Bronze**: minimal validations (file existence, flexible schema)
+* **Silver**: cleaning, deduplication, **contracts + tests**
+* **Gold**: reliable metrics ready for consumption
 
 ---
 
-## ✅ Testes no dbt
+## ✅ dbt Tests
 
-Os testes são definidos em arquivos `schema.yml` e executados com:
+Tests are defined in `schema.yml` files and executed with:
 
 ```bash
 dbt test
 ```
 
-### Exemplos de testes utilizados
+### Example of Used Tests
 
 ```yaml
 models:
@@ -167,22 +178,22 @@ models:
           - not_null
 ```
 
-Tipos de testes comuns:
+Common test types:
 
 * `not_null`
 * `unique`
 * `accepted_values`
 * `relationships`
 
-Esses testes são **automáticos** e falham o pipeline caso alguma regra seja violada.
+These tests are **automatic** and fail the pipeline if any rule is violated.
 
 ---
 
 ## 📜 Data Contracts (dbt)
 
-O projeto utiliza **Data Contracts** para garantir que o schema dos modelos Silver seja **estritamente controlado**.
+The project uses **Data Contracts** to ensure that Silver models have a **strictly controlled schema**.
 
-### Exemplo de contract
+### Contract Example
 
 ```yaml
 models:
@@ -197,33 +208,33 @@ models:
         data_type: varchar
 ```
 
-### O que o contract garante?
+### What Does the Contract Guarantee?
 
-* Tipos de dados corretos
-* Colunas obrigatórias
-* Quebras explícitas em caso de mudanças inesperadas
+* Correct data types
+* Mandatory columns
+* Explicit failures when unexpected changes occur
 
-Se o SQL gerar um tipo incompatível, o `dbt run` **falha imediatamente**.
-
----
-
-## ⏱️ Quando os testes e contracts são executados?
-
-### 1️⃣ Durante o `dbt run`
-
-* Contracts são validados **no momento da criação do modelo**
-* Falha rápida (fail‑fast)
-
-### 2️⃣ Durante o `dbt test`
-
-* Testes de qualidade são executados após a criação dos modelos
-* Qualquer falha interrompe o pipeline
+If the SQL produces an incompatible type, `dbt run` **fails immediately**.
 
 ---
 
-## 🌀 Integração com Airflow
+## ⏱️ When Are Tests and Contracts Executed?
 
-A DAG possui uma task dedicada para testes:
+### 1️⃣ During `dbt run`
+
+* Contracts are validated **at model creation time**
+* Fail-fast behavior
+
+### 2️⃣ During `dbt test`
+
+* Data quality tests are executed after models are created
+* Any failure stops the pipeline
+
+---
+
+## 🌀 Airflow Integration
+
+The DAG includes a dedicated task for tests:
 
 ```python
 dbt_test = BashOperator(
@@ -237,7 +248,7 @@ dbt_test = BashOperator(
 )
 ```
 
-Fluxo simplificado:
+Simplified flow:
 
 ```
 ingest → dbt_bronze → dbt_silver → dbt_gold → dbt_test
@@ -245,38 +256,34 @@ ingest → dbt_bronze → dbt_silver → dbt_gold → dbt_test
 
 ---
 
-Perfeito — segue **todo o conteúdo já no formato final de README.md**, sem blocos extras, pronto para **copiar e colar diretamente** no seu `README.md` geral.
+## 🔁 CI – Continuous Integration with dbt
+
+This repository includes a **CI pipeline using GitHub Actions**, responsible for ensuring **quality, consistency, and governance** before any change is merged into the `main` branch.
+
+The CI automatically validates **dbt models, tests, and data contracts** on every `push` or `pull request`.
 
 ---
 
-## 🔁 CI – Continuous Integration com dbt
+## 🎯 CI Objectives
 
-Este repositório possui um pipeline de **CI (Continuous Integration)** utilizando **GitHub Actions**, responsável por garantir **qualidade, consistência e governança** dos dados antes de qualquer alteração ser integrada ao branch `main`.
+The CI pipeline ensures that:
 
-O CI valida automaticamente **modelos, testes e contratos de dados do dbt** a cada `push` ou `pull request`.
-
----
-
-## 🎯 Objetivos do CI
-
-O pipeline de CI garante que:
-
-* Todos os modelos dbt **compilam e executam corretamente**
-* **Testes de dados** (not null, unique, accepted values, etc.) são respeitados
-* **Contratos de dados (dbt contracts)** são validados
-* Nenhuma alteração quebre a arquitetura **Bronze / Silver / Gold**
-* Erros são detectados **antes** de chegar à produção
+* All dbt models **compile and run successfully**
+* **Data tests** (not null, unique, accepted values, etc.) are enforced
+* **Data contracts (dbt contracts)** are validated
+* The **Bronze / Silver / Gold** architecture is preserved
+* Errors are detected **before** reaching production
 
 ---
 
-## ⚙️ Quando o CI é executado
+## ⚙️ When CI Runs
 
-O CI roda automaticamente em:
+CI runs automatically on:
 
-* Todo **Pull Request**
-* Todo **push para o branch `main`**
+* Every **Pull Request**
+* Every **push to the `main` branch**
 
-Configuração de trigger:
+Trigger configuration:
 
 ```yaml
 on:
@@ -287,11 +294,11 @@ on:
 
 ---
 
-## 🧱 Etapas do Pipeline
+## 🧱 Pipeline Steps
 
-### 1️⃣ Checkout do código
+### 1️⃣ Code Checkout
 
-Clona o repositório para o runner do GitHub Actions.
+Clones the repository into the GitHub Actions runner.
 
 ```yaml
 - uses: actions/checkout@v4
@@ -299,9 +306,9 @@ Clona o repositório para o runner do GitHub Actions.
 
 ---
 
-### 2️⃣ Setup do ambiente Python
+### 2️⃣ Python Environment Setup
 
-Define a versão do Python usada no CI, garantindo consistência com o ambiente local.
+Defines the Python version used in CI, ensuring consistency with the local environment.
 
 ```yaml
 - name: Set up Python
@@ -312,9 +319,9 @@ Define a versão do Python usada no CI, garantindo consistência com o ambiente 
 
 ---
 
-### 3️⃣ Instalação das dependências
+### 3️⃣ Dependency Installation
 
-Instala todas as dependências necessárias para execução do dbt.
+Installs all dependencies required to run dbt.
 
 ```yaml
 - name: Install dependencies
@@ -322,17 +329,17 @@ Instala todas as dependências necessárias para execução do dbt.
     pip install -r requirements.txt
 ```
 
-Inclui:
+Includes:
 
 * `dbt-core`
 * `dbt-duckdb`
-* bibliotecas auxiliares
+* helper libraries
 
 ---
 
-### 4️⃣ Download de pacotes dbt
+### 4️⃣ dbt Package Download
 
-Baixa pacotes definidos no `packages.yml` (ex: `dbt-utils`).
+Downloads packages defined in `packages.yml` (e.g. `dbt-utils`).
 
 ```yaml
 - name: Run dbt deps
@@ -343,9 +350,9 @@ Baixa pacotes definidos no `packages.yml` (ex: `dbt-utils`).
 
 ---
 
-### 5️⃣ Build completo com dbt
+### 5️⃣ Full dbt Build
 
-Executa modelos, testes e contratos em uma única etapa.
+Runs models, tests, and contracts in a single step.
 
 ```yaml
 - name: Run dbt build
@@ -354,21 +361,21 @@ Executa modelos, testes e contratos em uma única etapa.
     dbt build --fail-fast
 ```
 
-O comando `dbt build` executa:
+The `dbt build` command runs:
 
-* `dbt run` → cria os modelos
-* `dbt test` → executa testes e contratos
-* Seeds e snapshots (se existirem)
+* `dbt run` → builds models
+* `dbt test` → runs tests and validates contracts
+* Seeds and snapshots (if present)
 
-O parâmetro `--fail-fast` interrompe o pipeline ao primeiro erro, reduzindo o tempo de feedback.
+The `--fail-fast` flag stops the pipeline at the first failure, reducing feedback time.
 
 ---
 
-## 🧪 Testes de Dados
+## 🧪 Data Tests
 
-Os testes são definidos nos arquivos `schema.yml` e executados automaticamente durante o CI.
+Tests are defined in `schema.yml` files and executed automatically during CI.
 
-Exemplo de testes:
+Example:
 
 ```yaml
 models:
@@ -380,22 +387,22 @@ models:
           - unique
 ```
 
-Tipos comuns de testes:
+Common test types:
 
 * `not_null`
 * `unique`
 * `accepted_values`
-* testes customizados
+* custom tests
 
-Qualquer violação faz o pipeline falhar.
+Any violation causes the pipeline to fail.
 
 ---
 
-## 📜 Contratos de Dados (dbt Contracts)
+## 📜 Data Contracts (dbt Contracts)
 
-Os contratos garantem que os modelos entregam **estrutura estável, tipada e versionada**.
+Contracts ensure models deliver a **stable, typed, and versioned structure**.
 
-Exemplo de contrato:
+Example:
 
 ```yaml
 models:
@@ -410,147 +417,148 @@ models:
         data_type: varchar
 ```
 
-O CI falha se:
+CI fails if:
 
-* Uma coluna esperada não existir
-* O tipo de dado estiver incorreto
-* A estrutura do modelo mudar sem controle
-
----
-
-## 🚫 O que faz o CI falhar
-
-O pipeline falha automaticamente se ocorrer:
-
-* Erro de SQL
-* Modelo dbt quebrado
-* Teste de dados violado
-* Contrato de dados não respeitado
-* Erro de dependência ou compilação
+* An expected column is missing
+* A data type is incorrect
+* The model structure changes unexpectedly
 
 ---
 
-## ✅ Benefícios do CI
+## 🚫 What Causes CI to Fail
 
-* Governança de dados desde o código
-* Prevenção de regressões
-* Confiança para evoluir modelos
-* Base sólida para deploy em cloud
-* Alinhamento com **Data Platforms modernas**
+The pipeline automatically fails if there is:
 
----
-
-## 🚨 O que acontece em caso de falha?
-
-* ❌ Teste falhou → `dbt test` retorna exit code ≠ 0
-* ❌ Contract violado → `dbt run` falha
-* ❌ Airflow marca a task como **FAILED**
-* ❌ Pipeline não avança para Gold
+* SQL error
+* Broken dbt model
+* Data test violation
+* Data contract violation
+* Dependency or compilation error
 
 ---
 
-## 🧠 Boas práticas adotadas
+## ✅ CI Benefits
 
-* Testes começam no Silver (dados já tratados)
-* Contracts apenas onde há consumidores críticos
-* Tasks separadas para `run` e `test`
-* Mesmo comando no Airflow e CI
-
----
-
-## 🏁 Resultado
-
-Com essa abordagem, o pipeline garante:
-
-✔ Dados confiáveis
-✔ Quebras explícitas e controladas
-✔ Observabilidade
-✔ Pronto para escala e produção
+* Data governance from code
+* Regression prevention
+* Confidence to evolve models
+* Strong foundation for cloud deployment
+* Alignment with **modern Data Platforms**
 
 ---
 
-> "Qualidade de dados não é uma etapa final, é parte do design do pipeline."
+## 🚨 What Happens on Failure?
+
+* ❌ Test fails → `dbt test` returns non-zero exit code
+* ❌ Contract violated → `dbt run` fails
+* ❌ Airflow marks the task as **FAILED**
+* ❌ Pipeline does not advance to Gold
+
+---
+
+## 🧠 Adopted Best Practices
+
+* Tests start at the Silver layer (already treated data)
+* Contracts only where there are critical consumers
+* Separate tasks for `run` and `test`
+* Same commands used in Airflow and CI
+
+---
+
+### CI Pipeline excuted
+<img src="docs/ci_pipeline.png" alt="Airflow DAG" width="500" height="auto">
+
+## 🏁 Result
+
+With this approach, the pipeline guarantees:
+
+✔ Reliable data
+✔ Explicit and controlled failures
+✔ Observability
+✔ Ready for scale and production
+
+---
+
+> “Data quality is not a final step, it is part of the pipeline design.”
 > — Data Engineering mindset
-
-Perfeito — abaixo está a **documentação completa de 🔍 Observability & Reliability**, já **100% no formato aceito por README.md**, pronta para copiar e colar no seu repositório.
 
 ---
 
 ## 🔍 Observability & Reliability
 
-Este projeto foi desenhado com foco em **observabilidade, confiabilidade e rastreabilidade de dados**, seguindo boas práticas de **Data Platforms modernas**.
+This project was designed with a strong focus on **observability, reliability, and data traceability**, following best practices of **modern Data Platforms**.
 
-A observabilidade permite responder rapidamente às perguntas:
+Observability enables quick answers to questions such as:
 
-* O pipeline rodou?
-* Onde falhou?
-* Os dados estão completos, corretos e atualizados?
-* Qual camada foi impactada?
-
----
-
-## 🧱 Camadas de Observabilidade
-
-A observabilidade está distribuída em **quatro níveis principais**:
-
-1. **Ingestão (Landing)**
-2. **Transformações (dbt – Bronze / Silver / Gold)**
-3. **Orquestração (Airflow)**
-4. **CI / Qualidade de Dados**
+* Did the pipeline run?
+* Where did it fail?
+* Are the data complete, correct, and fresh?
+* Which layer was impacted?
 
 ---
 
-## 📥 Observability na Ingestão (Landing)
+## 🧱 Observability Layers
 
-Durante a ingestão da API:
+Observability is distributed across **four main layers**:
 
-* Cada execução cria um **diretório particionado por data**
-* Logs explícitos informam:
+1. **Ingestion (Landing)**
+2. **Transformations (dbt – Bronze / Silver / Gold)**
+3. **Orchestration (Airflow)**
+4. **CI / Data Quality**
 
-  * Caminho do arquivo gerado
-  * Quantidade de registros ingeridos
-* Falhas de API interrompem o pipeline imediatamente
+---
 
-Exemplo de log:
+## 📥 Observability at Ingestion (Landing)
+
+During API ingestion:
+
+* Each execution creates a **date-partitioned directory**
+* Explicit logs provide:
+
+  * Generated file path
+  * Number of ingested records
+* API failures immediately stop the pipeline
+
+Example log:
 
 ```text
 [OK] Landing file written to /opt/airflow/data/landing/breweries/2026-02-01/list_breweries.json
 [OK] Records ingested: 50
 ```
 
-Benefícios:
+Benefits:
 
-* Rastreamento por data (`execution_date`)
-* Reprocessamento simples por partição
-* Debug rápido de falhas upstream
+* Date-based traceability (`execution_date`)
+* Easy reprocessing by partition
+* Fast upstream debugging
 
 ---
 
-## 🧪 Observability nas Transformações (dbt)
+## 🧪 Observability in Transformations (dbt)
 
-### 📊 Métricas automáticas
+### 📊 Automatic Metrics
 
-Cada modelo dbt gera artefatos de observabilidade:
+Each dbt model generates observability artifacts:
 
 * `run_results.json`
 * `manifest.json`
 * `catalog.json`
 
-Esses artefatos permitem:
+These artifacts allow you to:
 
-* Ver quais modelos rodaram
-* Identificar tempo de execução
-* Diagnosticar falhas de dependência
+* See which models ran
+* Identify execution time
+* Diagnose dependency failures
 
 ---
 
-### 🧱 Contratos de Dados
+### 🧱 Data Contracts
 
-Os **dbt contracts** garantem estabilidade estrutural dos dados.
+**dbt contracts** guarantee structural stability of data.
 
-Se a estrutura esperada mudar, o pipeline falha imediatamente.
+If the expected structure changes, the pipeline fails immediately.
 
-Exemplo:
+Example:
 
 ```yaml
 config:
@@ -558,39 +566,39 @@ config:
     enforced: true
 ```
 
-Isso evita:
+This prevents:
 
-* Quebras silenciosas
-* Mudanças inesperadas para consumidores downstream
-* Erros em dashboards e APIs
-
----
-
-### 🧪 Testes de Qualidade
-
-Testes dbt garantem:
-
-* Não nulidade (`not_null`)
-* Unicidade (`unique`)
-* Valores válidos (`accepted_values`)
-* Integridade referencial (quando aplicável)
-
-Todos os testes são executados:
-
-* No Airflow (`dbt test`)
-* No CI (GitHub Actions)
+* Silent breaking changes
+* Unexpected downstream consumer failures
+* Dashboard and API errors
 
 ---
 
-## 🔁 Incrementalidade & Confiabilidade
+### 🧪 Data Quality Tests
 
-Na camada **Silver**, os modelos:
+dbt tests ensure:
 
-* Mantêm apenas o **registro mais recente por chave**
-* Evitam duplicações
-* Garantem idempotência
+* Non-null values (`not_null`)
+* Uniqueness (`unique`)
+* Valid domain values (`accepted_values`)
+* Referential integrity (when applicable)
 
-Exemplo de lógica:
+Tests run in:
+
+* Airflow (`dbt test`)
+* CI (GitHub Actions)
+
+---
+
+## 🔁 Incrementality & Reliability
+
+In the **Silver layer**, models:
+
+* Keep only the **latest record per key**
+* Avoid duplication
+* Ensure idempotency
+
+Example logic:
 
 ```sql
 ROW_NUMBER() OVER (
@@ -599,24 +607,24 @@ ROW_NUMBER() OVER (
 )
 ```
 
-Benefícios:
+Benefits:
 
-* Reprocessamentos seguros
-* Correção de dados históricos
-* Alta confiabilidade operacional
+* Safe reprocessing
+* Historical corrections
+* High operational reliability
 
 ---
 
-## ⏱️ Observability no Airflow
+## ⏱️ Observability in Airflow
 
-O Airflow fornece:
+Airflow provides:
 
-* UI visual com status por task
-* Logs detalhados por execução
-* Retry automático em falhas transitórias
-* Alertas visuais de erro
+* Visual UI with task-level status
+* Detailed logs per execution
+* Automatic retries for transient failures
+* Clear failure visibility
 
-Configurações relevantes:
+Relevant configuration:
 
 ```python
 default_args = {
@@ -625,88 +633,86 @@ default_args = {
 }
 ```
 
-Cada etapa do pipeline é isolada:
+Each pipeline stage is isolated:
 
-* Ingestão
+* Ingestion
 * Bronze
 * Silver
 * Gold
-* Testes
+* Tests
 
-Falhas são **localizadas e rastreáveis**.
+Failures are **localized and traceable**.
 
 ---
 
 ## 🚦 Fail Fast & Blast Radius Control
 
-O pipeline segue o princípio de **fail fast**:
+The pipeline follows the **fail-fast principle**:
 
-* Qualquer erro interrompe a execução
-* Nenhuma camada downstream roda com dados inválidos
-* O impacto (blast radius) é controlado
+* Any error stops execution
+* No downstream layer runs with invalid data
+* Impact (blast radius) is controlled
 
-Exemplo:
+Examples:
 
-* Falha na ingestão → dbt não executa
-* Falha no Bronze → Silver e Gold não executam
+* Ingestion failure → dbt does not run
+* Bronze failure → Silver and Gold do not run
+
+---
+## 🔐 CI Reliability
+
+CI acts as the **last line of defense** before merge:
+
+* No change is merged without:
+
+  * Valid models
+  * Passing tests
+  * Enforced contracts
+
+If CI fails:
+
+* The PR is blocked
+* Changes do not reach production
 
 ---
 
-## 🔐 Confiabilidade no CI
+## 📈 Reliability Indicators
 
-O CI atua como **última linha de defesa** antes do merge:
+This project enables monitoring of:
 
-* Nenhuma mudança entra sem:
+* Success/failure per execution
+* Record volume per partition
+* Data freshness
+* Structural model integrity
 
-  * Modelos válidos
-  * Testes aprovados
-  * Contratos respeitados
+These indicators support:
 
-Se o CI falhar:
-
-* O PR é bloqueado
-* A alteração não chega à produção
-
----
-
-## 📈 Indicadores de Confiabilidade
-
-Este projeto permite monitorar:
-
-* Sucesso/falha por execução
-* Volume de registros por partição
-* Freshness dos dados
-* Integridade estrutural dos modelos
-
-Esses indicadores são base para:
-
-* SLAs de dados
-* Alertas automatizados
-* Monitoramento futuro (Great Expectations, OpenLineage, etc.)
+* Data SLAs
+* Automated alerts
+* Future monitoring (Great Expectations, OpenLineage, etc.)
 
 ---
 
-## 🛠️ Possíveis Evoluções
+## 🛠️ Possible Evolutions
 
-Este projeto está pronto para evoluir para:
+This project is ready to evolve with:
 
 * Great Expectations
 * dbt Freshness Checks
 * OpenLineage / Marquez
 * Data SLAs
-* Alertas por Slack / Email
-* Observabilidade centralizada (Datadog, Prometheus)
-* Testes Unitarios
+* Slack / Email alerts
+* Centralized observability (Datadog, Prometheus)
+* Unit tests
 
 ---
 
-## 🏆 Visão de Engenharia de Dados
+## 🏆 Data Engineering Vision
 
-> “A plataforma foi desenhada com observabilidade em todas as camadas: ingestão, transformação, orquestração e CI. Falhas são detectadas cedo, isoladas e rastreáveis.”
+> “The platform was designed with observability across all layers: ingestion, transformation, orchestration, and CI. Failures are detected early, isolated, and traceable.”
 
 ---
 
+## 👨‍💻 Author
 
-## 👨‍💻 Autor
-
-Marcos Antonio de Gois Silva ( Data & Analytics - 2026)
+Marcos Antonio de Gois Silva (Data & Analytics – 2026)
