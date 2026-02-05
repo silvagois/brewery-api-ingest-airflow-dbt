@@ -118,11 +118,11 @@ Once the containers are running, access:
 
 ### Airflow DAG Running Successfully
 
-<img src="docs/dag_brewery_data_pipeline.png" alt="Airflow DAG" width="500" height="auto">
+<img src="docs/dag_brewery_data_pipeline.png" alt="Airflow DAG" width="800" height="auto">
 
 ### Gold Table in DuckDb
 
-<img src="docs/gold_table_duckdb.png" alt="Airflow DAG" width="500" height="auto">
+<img src="docs/gold_table_duckdb.png" alt="Airflow DAG" width="800" height="auto">
 
 ---
 
@@ -462,7 +462,7 @@ The pipeline automatically fails if there is:
 ---
 
 ### CI Pipeline excuted
-<img src="docs/ci_pipeline.png" alt="Airflow DAG" width="500" height="auto">
+<img src="docs/ci_pipeline.png" alt="Airflow DAG" width="800" height="auto">
 
 ## 🏁 Result
 
